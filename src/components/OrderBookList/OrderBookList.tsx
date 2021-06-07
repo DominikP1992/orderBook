@@ -17,20 +17,30 @@ import useOrderBookListStyles from './orderBookList.styles';
 import { orderListConfig } from './orderBookList.config';
 
 // types
-import { OrderBookListPropsType, OrdersByPriceType, SingleOrderType } from './orderBookList.types';
+import {
+  OrderBookListPropsType,
+  OrdersByPriceType,
+  SingleOrderType,
+} from './orderBookList.types';
 
 // utils
-import { getGroupedOrdersByPrice, getOrdersArray, getOrdersByPrice } from './orderBookList.utils';
+import {
+  getGroupedOrdersByPrice,
+  getOrdersArray,
+  getOrdersByPrice,
+} from './orderBookList.utils';
 
-function OrderBookList({ orders, type, group,
-  defaultGroup }: OrderBookListPropsType) {
+function OrderBookList({
+  orders,
+  type,
+  group,
+  defaultGroup,
+}: OrderBookListPropsType) {
   const classes = useOrderBookListStyles();
-  const {
-    color,
-    depthColor,
-    titleOrder,
-    direction,
-  } = useMemo(() => orderListConfig[type], [type]);
+  const { color, depthColor, titleOrder, direction } = useMemo(
+    () => orderListConfig[type],
+    [type],
+  );
 
   const [ordersByPrice, setOrdersByPrice] = useState<OrdersByPriceType>({});
 
@@ -44,59 +54,57 @@ function OrderBookList({ orders, type, group,
     [direction, depthColor],
   );
 
-  const groupedOrdersByPrice = useMemo(
-    () => {
-      if (group === defaultGroup) {
-        return ordersByPrice;
-      }
-      return getGroupedOrdersByPrice(ordersByPrice, group);
-    },
-    [ordersByPrice, group, defaultGroup],
-  );
+  const groupedOrdersByPrice = useMemo(() => {
+    if (group === defaultGroup) {
+      return ordersByPrice;
+    }
+    return getGroupedOrdersByPrice(ordersByPrice, group);
+  }, [ordersByPrice, group, defaultGroup]);
 
   const ordersArr: SingleOrderType[] = useMemo(
-    () => getOrdersArray(groupedOrdersByPrice), [groupedOrdersByPrice],
+    () => getOrdersArray(groupedOrdersByPrice),
+    [groupedOrdersByPrice],
   );
 
-  const getTableRow = useCallback((order: SingleOrderType, marketDepth: number) => (
-    <TableRow key={`${order.price}`} style={{ background: getMarketDepthBackground(marketDepth) }}>
-      {
-        titleOrder.map((tableKey) => (
+  const getTableRow = useCallback(
+    (order: SingleOrderType, marketDepth: number) => (
+      <TableRow
+        key={`${order.price}`}
+        style={{ background: getMarketDepthBackground(marketDepth) }}
+      >
+        {titleOrder.map((tableKey) => (
           <TableCell
             className={classes.cell}
             size="small"
             key={tableKey}
-            style={
-              { color: tableKey === OrderBookValueListEnum.PRICE ? color : 'initial' }
-            }
+            style={{
+              color:
+                tableKey === OrderBookValueListEnum.PRICE ? color : undefined,
+            }}
           >
             {order[tableKey as OrderBookValueListEnum]}
           </TableCell>
-        ))
-      }
-    </TableRow>
-  ), [getMarketDepthBackground, titleOrder, color, classes]);
+        ))}
+      </TableRow>
+    ),
+    [getMarketDepthBackground, titleOrder, color, classes],
+  );
 
   return (
     <Table>
       <TableHead>
         <TableRow>
-          {orderListConfig[type].titleOrder.map(
-            (title) => (
-              <TableCell
-                className={classes.cell}
-                size="small"
-                key={title}
-              >
-                {title}
-              </TableCell>
-            ))}
+          {orderListConfig[type].titleOrder.map((title) => (
+            <TableCell className={classes.cell} size="small" key={title}>
+              {title}
+            </TableCell>
+          ))}
         </TableRow>
       </TableHead>
       <TableBody>
         {ordersArr.map((order) => {
           const marketDepth = Math.round(
-            ((order.total / (ordersArr[ordersArr.length - 1].total)) * 100),
+            (order.total / ordersArr[ordersArr.length - 1].total) * 100,
           );
           return getTableRow(order, marketDepth);
         })}

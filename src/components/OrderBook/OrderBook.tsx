@@ -24,13 +24,18 @@ import useOrderBookStyles from './orderBook.styles';
 import { marketConfig } from './orderBook.config';
 
 type OrderBookPropsType = {
-  orders: AllOrders,
-  market: keyof typeof MarketEnum,
-  isActive: boolean,
-  openConnection: () => void
+  orders: AllOrders;
+  market: keyof typeof MarketEnum;
+  isActive: boolean;
+  openConnection: () => void;
 };
 
-function OrderBook({ orders, market, isActive, openConnection }: OrderBookPropsType) {
+function OrderBook({
+  orders,
+  market,
+  isActive,
+  openConnection,
+}: OrderBookPropsType) {
   const classes = useOrderBookStyles();
   const marketInfo = useMemo(() => marketConfig[market], [market]);
   const [group, setGroup] = useState(marketInfo.defaultGroup);
@@ -45,23 +50,26 @@ function OrderBook({ orders, market, isActive, openConnection }: OrderBookPropsT
 
   return (
     <Grid container>
-      <Grid container justify="space-between" alignItems="center">
-        <Typography display="inline">
-          Order book
-        </Typography>
-        <Typography display="inline">
-          {marketInfo.marketName}
-        </Typography>
-        <Select
-          value={group}
-          onChange={handleChange}
-          disabled={!isActive}
-        >
-          {marketInfo.groups.map((orderBookGroup: number) =>
-            <MenuItem key={orderBookGroup} value={orderBookGroup}>{`Group ${orderBookGroup}`}</MenuItem>)}
+      <Grid
+        container
+        justify="space-between"
+        alignItems="center"
+        className={classes.orderBookListHeader}
+      >
+        <Typography display="inline">Order book</Typography>
+        <Typography display="inline">{marketInfo.marketName}</Typography>
+        <Select value={group} onChange={handleChange} disabled={!isActive}>
+          {marketInfo.groups.map((orderBookGroup: number) => (
+            <MenuItem
+              key={orderBookGroup}
+              value={orderBookGroup}
+            >
+              {`Group ${orderBookGroup}`}
+            </MenuItem>
+          ))}
         </Select>
       </Grid>
-      <Grid container className={classes.orderBookList}>
+      <Grid container className={classes.orderBookListBody}>
         {orders && orders.bids && orders.asks && (
           <React.Fragment>
             <Grid item xs={12} md={6}>
@@ -90,16 +98,20 @@ function OrderBook({ orders, market, isActive, openConnection }: OrderBookPropsT
                 {' '}
                 <strong>Connect</strong>
                 {' '}
-                button to reconnect
+                button to
+                reconnect
               </Typography>
-              <Button onClick={openConnection} variant="contained" color="secondary">
+              <Button
+                onClick={openConnection}
+                variant="contained"
+                color="secondary"
+              >
                 Connect
               </Button>
             </Grid>
           </div>
         )}
       </Grid>
-
     </Grid>
   );
 }
