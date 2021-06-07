@@ -1,3 +1,4 @@
+import colors from 'colors';
 import OrderBookValueListEnum from 'enums/orderBookValueList.enum';
 import TransactionTypeEnum from 'enums/transactionType.enum';
 
@@ -8,14 +9,14 @@ export const tableTitleOrder = [
 ];
 export const orderListConfig = {
   [TransactionTypeEnum.ASKS]: {
-    color: 'green',
-    depthColor: 'lightgreen',
+    color: colors.textGreen,
+    depthColor: colors.depthGreen,
     titleOrder: tableTitleOrder,
     direction: '-90deg',
   },
   [TransactionTypeEnum.BIDS]: {
-    color: 'red',
-    depthColor: 'pink',
+    color: colors.textRed,
+    depthColor: colors.depthRed,
     titleOrder: [...tableTitleOrder].reverse(),
     direction: '90deg',
   },
